@@ -1,0 +1,133 @@
+from abc import ABC, abstractmethod
+
+class Vehiculo(ABC):
+    def __init__(self, marca: str, modelo: str, precio_base: float, kilometraje: float):
+        self._marca = marca
+        self._modelo = modelo
+        self.precio_base_mantenimiento = precio_base
+        self.kilometraje = kilometraje
+
+    @property
+    def marca(self) -> str:
+        return self._marca
+
+    @property
+    def modelo(self) -> str:
+        return self._modelo
+
+    @property
+    def precio_base_mantenimiento(self) -> float:
+        return self._precio_base_mantenimiento
+
+    @precio_base_mantenimiento.setter
+    def precio_base_mantenimiento(self, precio: float):
+        if precio < 0:
+            raise ValueError("El precio base de mantenimiento no puede ser negativo.")
+        self._precio_base_mantenimiento = precio
+
+    @property
+    def kilometraje(self) -> float:
+        return self._kilometraje
+
+    @kilometraje.setter
+    def kilometraje(self, kms: float):
+        if kms < 0:
+            raise ValueError("El kilometraje no puede ser negativo.")
+        self._kilometraje = kms
+
+    @abstractmethod
+    def calcular_costo_mantenimiento(self) -> float:
+        pass
+
+    def imprimir_ficha_tecnica(self):
+        print(f"Marca: {self._marca} | Modelo: {self._modelo} | "
+              f"Kilometraje: {self._kilometraje} km | Base Mantenimiento: ${self._precio_base_mantenimiento:.2f}", end="")
+
+
+class Auto(Vehiculo):
+    def __init__(self, marca: str, modelo: str, precio_base: float, kilometraje: float, costo_servicio: float):
+        super().__init__(marca, modelo, precio_base, kilometraje)
+        self.costo_servicio_auto = costo_servicio
+
+    @property
+    def costo_servicio_auto(self) -> float:
+        return self.__costo_servicio_auto
+
+    @costo_servicio_auto.setter
+    def costo_servicio_auto(self, costo: float):
+        if costo < 0:
+            raise ValueError("El costo de servicio no puede ser negativo.")
+        self.__costo_servicio_auto = costo
+
+    def calcular_costo_mantenimiento(self) -> float:
+        total = self._precio_base_mantenimiento + self.__costo_servicio_auto
+        if self._kilometraje > 100000.0:
+            total *= 1.15
+        return total
+
+    def imprimir_ficha_tecnica(self):
+        print("[TIPO: Auto] ", end="")
+        super().imprimir_ficha_tecnica()
+        print(f" | Costo Servicio Auto: ${self.__costo_servicio_auto:.2f}")
+
+
+class Moto(Vehiculo):
+    def __init__(self, marca: str, modelo: str, precio_base: float, kilometraje: float, costo_servicio: float):
+        super().__init__(marca, modelo, precio_base, kilometraje)
+        self.costo_servicio_moto = costo_servicio
+
+    @property
+    def costo_servicio_moto(self) -> float:
+        return self.__costo_servicio_moto
+
+    @costo_servicio_moto.setter
+    def costo_servicio_moto(self, costo: float):
+        if costo < 0:
+            raise ValueError("El costo de servicio no puede ser negativo.")
+        self.__costo_servicio_moto = costo
+
+    def calcular_costo_mantenimiento(self) -> float:
+        total = self._precio_base_mantenimiento + self.__costo_servicio_moto
+        if self._kilometraje > 100000.0:
+            total *= 1.15
+        return total
+
+    def imprimir_ficha_tecnica(self):
+        print("[TIPO: Moto] ", end="")
+        super().imprimir_ficha_tecnica()
+        print(f" | Costo Servicio Moto: ${self.__costo_servicio_moto:.2f}")
+
+
+class GestionVehiculos:
+    def __init__(self):
+        self._flota: list[Vehiculo] = []
+
+    def agregar_vehiculo(self, vehiculo: Vehiculo):
+        if isinstance(vehiculo, Vehiculo):
+            self._flota.append(vehiculo)
+
+    def mostrar_informe_mantenimiento(self):
+        print("\n=======================================================")
+        print("          INFORME DE MANTENIMIENTO DE VEHICULOS        ")
+        print("=======================================================\n")
+
+        for i, vehiculo in enumerate(self._flota, start=1):
+            print(f"Vehiculo #{i}:")
+            print("  ", end="")
+            vehiculo.imprimir_ficha_tecnica()
+            print(f"  Costo Final de Mantenimiento: ${vehiculo.calcular_costo_mantenimiento():.2f}")
+            print("-------------------------------------------------------")
+
+
+if __name__ == "__main__":
+    try:
+        sistema = GestionVehiculos()
+
+        sistema.agregar_vehiculo(Auto("Toyota", "Corolla", 15000.0, 45000.0, 5000.0))
+        sistema.agregar_vehiculo(Auto("Ford", "Focus", 15000.0, 120000.0, 5000.0))
+        sistema.agregar_vehiculo(Moto("Honda", "CB500", 8000.0, 105000.0, 2500.0))
+
+        sistema.mostrar_informe_mantenimiento()
+
+    except ValueError as e:
+        print(f"Error de validacion: {e}")
