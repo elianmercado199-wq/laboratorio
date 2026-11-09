@@ -1,0 +1,161 @@
+from abc import ABC, abstractmethod
+
+
+class Vehiculo(ABC):
+    @abstractmethod
+    def get_marca(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_modelo(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_kilometraje(self) -> float:
+        pass
+
+    @abstractmethod
+    def calcular_costo_mantenimiento(self) -> float:
+        pass
+
+    @abstractmethod
+    def obtener_ficha_tecnica(self) -> str:
+        pass
+
+
+class Auto(Vehiculo):
+    def __init__(self, marca: str, modelo: str, precio_base: float, kilometraje: float, costo_servicio: float):
+        self._marca = marca
+        self._modelo = modelo
+        self.precio_base = precio_base
+        self.kilometraje = kilometraje
+        self.costo_servicio_auto = costo_servicio
+
+    @property
+    def precio_base(self) -> float:
+        return self._precio_base
+
+    @precio_base.setter
+    def precio_base(self, valor: float):
+        if valor < 0:
+            raise ValueError("El precio base no puede ser negativo.")
+        self._precio_base = valor
+
+    @property
+    def kilometraje(self) -> float:
+        return self._kilometraje
+
+    @kilometraje.setter
+    def kilometraje(self, valor: float):
+        if valor < 0:
+            raise ValueError("El kilometraje no puede ser negativo.")
+        self._kilometraje = valor
+
+    @property
+    def costo_servicio_auto(self) -> float:
+        return self._costo_servicio_auto
+
+    @costo_servicio_auto.setter
+    def costo_servicio_auto(self, valor: float):
+        if valor < 0:
+            raise ValueError("El costo de servicio no puede ser negativo.")
+        self._costo_servicio_auto = valor
+
+    def get_marca(self) -> str:
+        return self._marca
+
+    def get_modelo(self) -> str:
+        return self._modelo
+
+    def get_kilometraje(self) -> float:
+        return self._kilometraje
+
+    def calcular_costo_mantenimiento(self) -> float:
+        total = self._precio_base + self._costo_servicio_auto
+        if self._kilometraje > 100000.0:
+            total *= 1.15
+        return total
+
+    def obtener_ficha_tecnica(self) -> str:
+        return f"[AUTO] {self._marca} {self._modelo} | Km: {self._kilometraje} | Servicio: ${self._costo_servicio_auto:.2f}"
+
+
+class Moto(Vehiculo):
+    def __init__(self, marca: str, modelo: str, precio_base: float, kilometraje: float, costo_servicio: float):
+        self._marca = marca
+        self._modelo = modelo
+        self.precio_base = precio_base
+        self.kilometraje = kilometraje
+        self.costo_servicio_moto = costo_servicio
+
+    @property
+    def precio_base(self) -> float:
+        return self._precio_base
+
+    @precio_base.setter
+    def precio_base(self, valor: float):
+        if valor < 0:
+            raise ValueError("El precio base no puede ser negativo.")
+        self._precio_base = valor
+
+    @property
+    def kilometraje(self) -> float:
+        return self._kilometraje
+
+    @kilometraje.setter
+    def kilometraje(self, valor: float):
+        if valor < 0:
+            raise ValueError("El kilometraje no puede ser negativo.")
+        self._kilometraje = valor
+
+    @property
+    def costo_servicio_moto(self) -> float:
+        return self._costo_servicio_moto
+
+    @costo_servicio_moto.setter
+    def costo_servicio_moto(self, valor: float):
+        if valor < 0:
+            raise ValueError("El costo de servicio no puede ser negativo.")
+        self._costo_servicio_moto = valor
+
+    def get_marca(self) -> str:
+        return self._marca
+
+    def get_modelo(self) -> str:
+        return self._modelo
+
+    def get_kilometraje(self) -> float:
+        return self._kilometraje
+
+    def calcular_costo_mantenimiento(self) -> float:
+        total = self._precio_base + self._costo_servicio_moto
+        if self._kilometraje > 100000.0:
+            total *= 1.15
+        return total
+
+    def obtener_ficha_tecnica(self) -> str:
+        return f"[MOTO] {self._marca} {self._modelo} | Km: {self._kilometraje} | Servicio: ${self._costo_servicio_moto:.2f}"
+
+
+class GestionVehiculos:
+    def __init__(self):
+        self._flota: list[Vehiculo] = []
+
+    def agregar_vehiculo(self, vehiculo: Vehiculo):
+        if isinstance(vehiculo, Vehiculo):
+            self._flota.append(vehiculo)
+
+    def generar_informe_mantenimiento(self):
+        print("=== INFORME DE MANTENIMIENTO DE VEHICULOS ===")
+        for i, v in enumerate(self._flota, 1):
+            print(f"{i}. {v.obtener_ficha_tecnica()}")
+            print(f"   Costo Final de Mantenimiento: ${v.calcular_costo_mantenimiento():.2f}")
+
+
+if __name__ == "__main__":
+    sistema = GestionVehiculos()
+    sistema.agregar_vehiculo(Auto("Toyota", "Corolla", 15000.0, 45000.0, 5000.0))
+    sistema.agregar_vehiculo(Auto("Ford", "Focus", 15000.0, 120000.0, 5000.0))
+    sistema.agregar_vehiculo(Moto("Honda", "CB500", 8000.0, 105000.0, 2500.0))
+
+    sistema.generar_informe_mantenimiento()
